@@ -2,6 +2,7 @@
 import time
 from selenium import webdriver
 import time
+import db_tools
 
 
 def extract_data():
@@ -13,7 +14,6 @@ def extract_data():
     #         month.click()
     units = driver.find_element_by_id('gb-unit').find_elements_by_tag_name('li')
     units[2].click()
-
     search_btn = driver.find_element_by_css_selector("[class='gb-btn gb-searchBtn']")
     search_btn.click()
     time.sleep(3)
@@ -25,10 +25,12 @@ def extract_data():
         # print(tr.text)
         ths = tr.find_elements_by_tag_name('th')
         print(ths[1].text, ths[2].text, ths[3].text, ths[4].text)
+        price = float(ths[3].text.replace(',',''))
+        db_tools.insert(selected_p, ths[2].text, '2018', '10', price, '')
 
 
 driver = webdriver.Chrome(
-    '/home/minzhang/PycharmProjects/sina_finance/house/chromedriver')  # Optional argument, if not specified will search path.
+    '/home/minzhang/PycharmProjects/crawler/house/chromedriver')  # Optional argument, if not specified will search path.
 # driver.get('http://www.creprice.cn/proprice/pchebei.html')
 driver.get('http://www.creprice.cn/rank/index.html')
 # time.sleep(5) # Let the user actually see something!
@@ -59,5 +61,3 @@ for p in provinces:
         selected_c = ''
         print('***城市***', selected_c)
         extract_data()
-
-
